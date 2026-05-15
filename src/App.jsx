@@ -46,19 +46,26 @@ function App() {
     }
   };
 
-  const handleSearch = async (query) => {
+  const handleSearch = async (queryOrCityObj) => {
     setLoading(true);
     setError('');
     try {
-      const results = await searchCity(query);
-      if (results && results.length > 0) {
-        // Find the best match or take the first one
-        const bestMatch = results[0];
+      if (typeof queryOrCityObj === 'string') {
+        const results = await searchCity(queryOrCityObj);
+        if (results && results.length > 0) {
+          // Find the best match or take the first one
+          const bestMatch = results[0];
+          const locationStr = bestMatch.admin1 ? `${bestMatch.name}, ${bestMatch.admin1}` : `${bestMatch.name}, ${bestMatch.country}`;
+          await fetchWeatherForCoords(bestMatch.latitude, bestMatch.longitude, locationStr);
+        } else {
+          setError('Kota tidak ditemukan.');
+          setLoading(false);
+        }
+      } else {
+        // It's a city object from autocomplete
+        const bestMatch = queryOrCityObj;
         const locationStr = bestMatch.admin1 ? `${bestMatch.name}, ${bestMatch.admin1}` : `${bestMatch.name}, ${bestMatch.country}`;
         await fetchWeatherForCoords(bestMatch.latitude, bestMatch.longitude, locationStr);
-      } else {
-        setError('Kota tidak ditemukan.');
-        setLoading(false);
       }
     } catch (err) {
       setError('Terjadi kesalahan saat mencari kota.');

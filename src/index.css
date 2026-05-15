@@ -67,7 +67,12 @@ h1 {
   margin: 0 auto;
 }
 
-.search-container form {
+.search-form-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.search-form-wrapper form {
   display: flex;
   width: 100%;
   gap: 0.5rem;
@@ -260,4 +265,50 @@ h1 {
 .geo-btn:hover {
   background: rgba(255,255,255,0.3);
   transform: scale(1.05);
+}
+
+/* Autocomplete Dropdown */
+.suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: 15px;
+  margin-top: 0.5rem;
+  overflow: hidden;
+  z-index: 10;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  text-align: left;
+}
+
+.suggestion-item {
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.suggestion-name {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.suggestion-details {
+  font-size: 0.85rem;
+  opacity: 0.7;
 }
