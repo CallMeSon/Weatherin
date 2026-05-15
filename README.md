@@ -22,9 +22,9 @@
 
 ## 🌤️ Tentang
 
-**Weatherin** adalah dashboard cuaca modern yang dibangun dengan React dan Vite. Aplikasi ini menyajikan informasi cuaca real-time, prakiraan 6 hari, kualitas udara, waktu terbit/terbenam matahari, dan banyak lagi — semuanya dengan tampilan yang elegan dan responsif.
+**Weatherin** adalah dashboard cuaca modern yang dibangun dengan React dan Vite. Aplikasi ini menyajikan informasi cuaca real-time, prakiraan 6 hari, kualitas udara, waktu terbit/terbenam matahari dan lainnya.
 
-> **✨ Tanpa API key!** — Menggunakan [Open-Meteo API](https://open-meteo.com/) yang sepenuhnya gratis dan open-source.
+> **✨ Tanpa API key!** — Menggunakan [Open-Meteo API](https://open-meteo.com/).
 
 ---
 
@@ -149,13 +149,3 @@ Kontribusi sangat diterima! Silakan buka **Issue** atau buat **Pull Request**.
 5. Buka Pull Request
 
 ---
-
-## 📄 Lisensi
-
-Proyek ini dilisensikan di bawah [MIT License](LICENSE).
-
----
-
-<p align="center">
-  Dibuat dengan ❤️ menggunakan React + Vite
-</p>
