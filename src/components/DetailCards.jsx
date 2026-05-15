@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Droplets, Wind, Eye } from 'lucide-react';
 
 export default function DetailCards({ data }) {
@@ -6,7 +7,9 @@ export default function DetailCards({ data }) {
   const current = data.current;
 
   // Convert visibility from meters to km
-  const visibilityKm = current.visibility ? (current.visibility / 1000).toFixed(0) : '—';
+  const visibilityKm = useMemo(() => {
+    return current.visibility ? (current.visibility / 1000).toFixed(0) : '—';
+  }, [current.visibility]);
 
   return (
     <>

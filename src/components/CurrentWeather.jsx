@@ -2,6 +2,7 @@ import { MapPin } from 'lucide-react';
 import { format } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
 import { getWeatherDescription } from '../services/api';
+import { codeToEmoji } from '../utils/helpers';
 import { Droplets, Wind, Gauge } from 'lucide-react';
 
 export default function CurrentWeather({ data, locationName }) {
@@ -54,14 +55,4 @@ export default function CurrentWeather({ data, locationName }) {
       </div>
     </div>
   );
-}
-
-function codeToEmoji(code, isDay) {
-  if (code === 0) return isDay ? '☀️' : '🌙';
-  if (code >= 1 && code <= 3) return isDay ? '⛅' : '☁️';
-  if (code >= 45 && code <= 48) return '🌫️';
-  if (code >= 51 && code <= 65) return '🌧️';
-  if (code >= 71 && code <= 75) return '❄️';
-  if (code >= 95) return '⛈️';
-  return '☁️';
 }

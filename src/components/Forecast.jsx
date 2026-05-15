@@ -1,6 +1,7 @@
 import { format, parseISO } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { getWeatherDescription } from '../services/api';
+import { codeToEmoji } from '../utils/helpers';
 
 export default function Forecast({ data }) {
   if (!data || !data.daily) return null;
@@ -22,8 +23,8 @@ export default function Forecast({ data }) {
         <h3 className="forecast-title">Prakiraan 6 Hari</h3>
       </div>
       <div className="forecast-grid">
-        {forecastDays.map((day, i) => (
-          <div key={i} className="card forecast-card">
+        {forecastDays.map((day) => (
+          <div key={day.date} className="card forecast-card">
             <span className="forecast-day">
               {format(parseISO(day.date), 'EEEE', { locale: id })}
             </span>
@@ -40,14 +41,4 @@ export default function Forecast({ data }) {
       </div>
     </div>
   );
-}
-
-function codeToEmoji(code) {
-  if (code === 0) return '☀️';
-  if (code >= 1 && code <= 3) return '⛅';
-  if (code >= 45 && code <= 48) return '🌫️';
-  if (code >= 51 && code <= 65) return '🌧️';
-  if (code >= 71 && code <= 75) return '❄️';
-  if (code >= 95) return '⛈️';
-  return '☁️';
 }
