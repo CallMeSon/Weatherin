@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, MapPin } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { searchCity } from '../services/api';
 
-export default function SearchBar({ onSearch, onGeolocate }) {
+export default function SearchBar({ onSearch }) {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -26,7 +26,7 @@ export default function SearchBar({ onSearch, onGeolocate }) {
         setSuggestions([]);
         setShowSuggestions(false);
       }
-    }, 500);
+    }, 400);
 
     return () => clearTimeout(delayDebounceFn);
   }, [query]);
@@ -39,7 +39,7 @@ export default function SearchBar({ onSearch, onGeolocate }) {
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [wrapperRef]);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -57,60 +57,48 @@ export default function SearchBar({ onSearch, onGeolocate }) {
   };
 
   return (
-    <div className="search-container">
-      <div className="search-form-wrapper" ref={wrapperRef}>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Cari kota..."
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setShowSuggestions(true);
-            }}
-            onFocus={() => {
-              if (suggestions.length > 0) setShowSuggestions(true);
-            }}
-          />
-          <button type="submit" className="search-btn" aria-label="Search">
-            <Search size={20} />
-          </button>
-        </form>
+    <div className="search-wrapper" ref={wrapperRef}>
+      <form onSubmit={handleSubmit}>
+        <span className="search-icon-inside">
+          <Search size={16} />
+        </span>
+        <input
+          type="text"
+          className="search-input"
+          placeholder="Cari kota..."
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setShowSuggestions(true);
+          }}
+          onFocus={() => {
+            if (suggestions.length > 0) setShowSuggestions(true);
+          }}
+        />
+      </form>
 
-        {/* Autocomplete Dropdown */}
-        {showSuggestions && (query.trim().length >= 2) && (
-          <div className="suggestions-dropdown">
-            {isLoading ? (
-              <div className="suggestion-item">Loading...</div>
-            ) : suggestions.length > 0 ? (
-              suggestions.map((city) => (
-                <div 
-                  key={city.id} 
-                  className="suggestion-item"
-                  onClick={() => handleSelectSuggestion(city)}
-                >
-                  <span className="suggestion-name">{city.name}</span>
-                  <span className="suggestion-details">
-                    {city.admin1 ? `${city.admin1}, ` : ''}{city.country}
-                  </span>
-                </div>
-              ))
-            ) : (
-              <div className="suggestion-item">Kota tidak ditemukan</div>
-            )}
-          </div>
-        )}
-      </div>
-      <button 
-        type="button" 
-        className="geo-btn" 
-        onClick={onGeolocate}
-        title="Gunakan Lokasi Saat Ini"
-        aria-label="Use current location"
-      >
-        <MapPin size={24} />
-      </button>
+      {showSuggestions && query.trim().length >= 2 && (
+        <div className="suggestions-dropdown">
+          {isLoading ? (
+            <div className="suggestion-item">Mencari...</div>
+          ) : suggestions.length > 0 ? (
+            suggestions.map((city) => (
+              <div
+                key={city.id}
+                className="suggestion-item"
+                onClick={() => handleSelectSuggestion(city)}
+              >
+                <span className="suggestion-name">{city.name}</span>
+                <span className="suggestion-details">
+                  {city.admin1 ? `${city.admin1}, ` : ''}{city.country}
+                </span>
+              </div>
+            ))
+          ) : (
+            <div className="suggestion-item">Kota tidak ditemukan</div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

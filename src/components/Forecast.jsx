@@ -1,5 +1,6 @@
 import { format, parseISO } from 'date-fns';
 import { id } from 'date-fns/locale';
+import { getWeatherDescription } from '../services/api';
 
 export default function Forecast({ data }) {
   if (!data || !data.daily) return null;
@@ -11,25 +12,29 @@ export default function Forecast({ data }) {
     date: t,
     max: temperature_2m_max[index + 1],
     min: temperature_2m_min[index + 1],
-    code: weather_code[index + 1]
+    code: weather_code[index + 1],
+    description: getWeatherDescription(weather_code[index + 1])
   }));
 
   return (
-    <div className="glass-panel forecast-container">
-      <h3 className="forecast-title">Prakiraan 6 Hari</h3>
+    <div className="forecast-section">
+      <div className="forecast-header">
+        <h3 className="forecast-title">Prakiraan 6 Hari</h3>
+      </div>
       <div className="forecast-grid">
         {forecastDays.map((day, i) => (
-          <div key={i} className="forecast-card">
+          <div key={i} className="card forecast-card">
             <span className="forecast-day">
               {format(parseISO(day.date), 'EEEE', { locale: id })}
             </span>
-            <div style={{ fontSize: '2rem' }}>
-               {codeToEmoji(day.code)}
+            <span className="forecast-icon">
+              {codeToEmoji(day.code)}
+            </span>
+            <div className="forecast-temps">
+              <span className="forecast-temp-max">{Math.round(day.max)}°</span>
+              <span className="forecast-temp-min">{Math.round(day.min)}°</span>
             </div>
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <span className="forecast-temp">{Math.round(day.max)}°</span>
-              <span style={{ fontSize: '0.9rem', opacity: 0.7 }}>{Math.round(day.min)}°</span>
-            </div>
+            <span className="forecast-desc">{day.description}</span>
           </div>
         ))}
       </div>

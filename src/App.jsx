@@ -1,14 +1,20 @@
-import { useState, useEffect } from 'react';
-import SearchBar from './components/SearchBar';
+import { useState, useEffect, useRef } from 'react';
+import Navbar from './components/Navbar';
 import CurrentWeather from './components/CurrentWeather';
+import DetailCards from './components/DetailCards';
+import SunriseSunset from './components/SunriseSunset';
 import Forecast from './components/Forecast';
-import { searchCity, reverseGeocode, getWeather } from './services/api';
+import AirQuality from './components/AirQuality';
+import { searchCity, reverseGeocode, getWeather, getAirQuality } from './services/api';
+import { Map } from 'lucide-react';
 
 function App() {
   const [weatherData, setWeatherData] = useState(null);
+  const [airData, setAirData] = useState(null);
   const [locationName, setLocationName] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const coordsRef = useRef({ lat: null, lon: null });
 
   // Initial load: Geolocation
   useEffect(() => {
@@ -29,13 +35,18 @@ function App() {
   const fetchWeatherForCoords = async (lat, lon, name) => {
     setLoading(true);
     setError('');
+    coordsRef.current = { lat, lon };
     try {
-      const data = await getWeather(lat, lon);
-      setWeatherData(data);
-      
+      const [weather, air] = await Promise.all([
+        getWeather(lat, lon),
+        getAirQuality(lat, lon)
+      ]);
+      setWeatherData(weather);
+      setAirData(air);
+
       if (!name) {
         const geoInfo = await reverseGeocode(lat, lon);
-        setLocationName(geoInfo.name);
+        setLocationName(`${geoInfo.name}, ${geoInfo.country}`);
       } else {
         setLocationName(name);
       }
@@ -53,18 +64,20 @@ function App() {
       if (typeof queryOrCityObj === 'string') {
         const results = await searchCity(queryOrCityObj);
         if (results && results.length > 0) {
-          // Find the best match or take the first one
           const bestMatch = results[0];
-          const locationStr = bestMatch.admin1 ? `${bestMatch.name}, ${bestMatch.admin1}` : `${bestMatch.name}, ${bestMatch.country}`;
+          const locationStr = bestMatch.admin1
+            ? `${bestMatch.name}, ${bestMatch.admin1}`
+            : `${bestMatch.name}, ${bestMatch.country}`;
           await fetchWeatherForCoords(bestMatch.latitude, bestMatch.longitude, locationStr);
         } else {
           setError('Kota tidak ditemukan.');
           setLoading(false);
         }
       } else {
-        // It's a city object from autocomplete
         const bestMatch = queryOrCityObj;
-        const locationStr = bestMatch.admin1 ? `${bestMatch.name}, ${bestMatch.admin1}` : `${bestMatch.name}, ${bestMatch.country}`;
+        const locationStr = bestMatch.admin1
+          ? `${bestMatch.name}, ${bestMatch.admin1}`
+          : `${bestMatch.name}, ${bestMatch.country}`;
         await fetchWeatherForCoords(bestMatch.latitude, bestMatch.longitude, locationStr);
       }
     } catch (err) {
@@ -82,38 +95,67 @@ function App() {
           const { latitude, longitude } = position.coords;
           fetchWeatherForCoords(latitude, longitude);
         },
-        (err) => {
-          setError('Akses lokasi ditolak atau tidak tersedia. Silakan cari kota secara manual.');
+        () => {
           setLoading(false);
-          // Set default to Jakarta if geolocation fails
           handleSearch('Jakarta');
         }
       );
     } else {
-      setError('Geolocation tidak didukung oleh browser Anda.');
       setLoading(false);
       handleSearch('Jakarta');
     }
   };
 
   return (
-    <div className="app-container">
-      <header>
-        <h1>Weatherin</h1>
-        <SearchBar onSearch={handleSearch} onGeolocate={handleGeolocate} />
-      </header>
+    <>
+      <Navbar onSearch={handleSearch} onGeolocate={handleGeolocate} />
 
-      {loading && <div className="loading">Memuat data...</div>}
-      
-      {error && <div className="error-message">{error}</div>}
+      <main className="app-container">
+        {error && <div className="error-message">{error}</div>}
 
-      {!loading && !error && weatherData && (
-        <div className="weather-grid">
-          <CurrentWeather data={weatherData} locationName={locationName} />
-          <Forecast data={weatherData} />
-        </div>
-      )}
-    </div>
+        {loading && (
+          <div className="loading-container">
+            <div className="spinner"></div>
+            <span className="loading-text">Memuat data cuaca...</span>
+          </div>
+        )}
+
+        {!loading && !error && weatherData && (
+          <>
+            {/* Top section: Hero + Detail Cards */}
+            <div className="dashboard-grid">
+              <CurrentWeather data={weatherData} locationName={locationName} />
+
+              <div className="detail-cards-column" style={{ display: 'contents' }}>
+                <DetailCards data={weatherData} />
+              </div>
+
+              <SunriseSunset data={weatherData} />
+            </div>
+
+            {/* Forecast */}
+            <div style={{ marginTop: '1.25rem' }}>
+              <Forecast data={weatherData} />
+            </div>
+
+            {/* Bottom section: Air Quality + Radar */}
+            <div className="bottom-grid" style={{ marginTop: '1.25rem' }}>
+              <AirQuality airData={airData} />
+              <div className="card radar-card">
+                <div className="radar-card-overlay"></div>
+                <div className="radar-card-content">
+                  <div className="radar-card-title">
+                    <Map size={16} style={{ display: 'inline', marginRight: '0.4rem', verticalAlign: 'middle' }} />
+                    Peta Radar
+                  </div>
+                  <div className="radar-card-subtitle">Pantau awan di sekitar {locationName.split(',')[0]}</div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+      </main>
+    </>
   );
 }
 
