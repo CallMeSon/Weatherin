@@ -13,6 +13,7 @@
   <a href="#tech-stack"><img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React" /></a>
   <a href="#tech-stack"><img src="https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" /></a>
   <a href="#api"><img src="https://img.shields.io/badge/API-Open--Meteo-22c55e?style=for-the-badge" alt="API" /></a>
+  <a href="https://weatherin-xxxxxxx.vercel.app"><img src="https://img.shields.io/badge/Demo-Live-22c55e?style=for-the-badge&logo=vercel" alt="Live Demo" /></a>
 </p>
 
 <br />
