@@ -5,6 +5,7 @@ import DetailCards from './components/DetailCards';
 import SunriseSunset from './components/SunriseSunset';
 import Forecast from './components/Forecast';
 import AirQuality from './components/AirQuality';
+import { NotificationProvider } from './contexts/NotificationContext';
 import { searchCity, reverseGeocode, getWeather, getAirQuality } from './services/api';
 import { Map } from 'lucide-react';
 
@@ -107,7 +108,7 @@ function App() {
   };
 
   return (
-    <>
+    <NotificationProvider weatherData={weatherData} airData={airData}>
       <Navbar onSearch={handleSearch} onGeolocate={handleGeolocate} />
 
       <main className="app-container">
@@ -155,7 +156,7 @@ function App() {
           </>
         )}
       </main>
-    </>
+    </NotificationProvider>
   );
 }
 
