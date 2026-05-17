@@ -1,5 +1,7 @@
-import { Search, MapPin, Bell } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import SearchBar from './SearchBar';
+import UserMenu from './UserMenu';
+import NotificationPanel from './NotificationPanel';
 
 export default function Navbar({ onSearch, onGeolocate }) {
   return (
@@ -9,9 +11,7 @@ export default function Navbar({ onSearch, onGeolocate }) {
         <SearchBar onSearch={onSearch} />
       </div>
       <div className="navbar-actions">
-        <button className="navbar-icon-btn" title="Notifikasi" aria-label="Notifications">
-          <Bell size={18} />
-        </button>
+        <NotificationPanel />
         <button
           className="navbar-icon-btn"
           onClick={onGeolocate}
@@ -20,6 +20,7 @@ export default function Navbar({ onSearch, onGeolocate }) {
         >
           <MapPin size={18} />
         </button>
+        <UserMenu />
       </div>
     </nav>
   );
